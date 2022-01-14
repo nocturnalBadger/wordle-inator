@@ -1,0 +1,15 @@
+target/debug/wordle  783.32s user 1.70s system 277% cpu 4:43.25 total
+
+replaced hashmap with big array
+target/debug/wordle  139.41s user 0.54s system 366% cpu 38.147 total
+
+combined response into a single usize variable, reduced float operations
+target/debug/wordle  133.39s user 0.04s system 384% cpu 34.726 total
+
+cargo build --release
+target/release/wordle  2.27s user 0.01s system 384% cpu 0.594 total
+holy crap!
+
+1000 games with initial word "tears"
+Played 1000 total games. Won 922. (92.20%)
+target/release/wordle  5.38s user 0.31s system 209% cpu 2.711 total
