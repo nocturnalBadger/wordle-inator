@@ -2,7 +2,7 @@ extern crate rand;
 use rayon::prelude::*;
 
 use rand::seq::SliceRandom;
-use std::collections::HashSet;
+use std::collections::HashMap;
 use std::convert::TryInto;
 
 const WORD_SIZE: usize = 5;
@@ -81,10 +81,18 @@ fn main() {
 fn select_move(wordlist: &[Word]) -> Word {
     let scores: Vec<usize> = wordlist.par_iter()
                          .map(|test_word| {
-        let mut responses = HashSet::new();
+        let mut responses: HashMap<WordleResponse, u32> = HashMap::new();
         for word in wordlist.iter() {
-            responses.insert(test_word.compare(word));
+            let response = test_word.compare(word);
+            match responses.remove_entry(&response) {
+                Some((_, val)) => responses.insert(response, val + 1),
+                None => responses.insert(response, 1),
+            };
         }
+
+        let worst_case = responses.values().max().unwrap();
+        println!("The worst case response for {} has {} possible words", test_word.string, worst_case);
+
         let unique = responses.len();
         return unique;
     }).collect();
