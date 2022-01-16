@@ -15,14 +15,21 @@ const MAX_GUESSES: u8 = 6;
 
 #[derive(Parser)]
 struct CliArgs {
+    /// number of games to simulate
     #[clap(short, long, default_value_t = 1)]
     plays: u32,
+    /// initial word to use as a guess (e.g. if it's been precomputed)
     #[clap(short, long)]
     initial_guess: Option<String>,
+    /// number of guesses allowed per game
     #[clap(short, long, default_value_t = MAX_GUESSES)]
     max_guesses: u8,
+    /// path to a txt file containing the list of words to use
     #[clap(short, long, default_value = "5_letter_words.txt")]
     wordlist: String,
+    /// word to use as the solution (by default a random word is chosen from the word list)
+    #[clap(short, long)]
+    solution: Option<String>,
 }
 
 fn load_wordlist(filename: std::path::PathBuf) -> Vec<Word> {
@@ -51,7 +58,10 @@ fn main() {
 
     let mut wins: u32 = 0;
     for _ in 0..args.plays {
-        let solution = words.choose(&mut rand::thread_rng()).unwrap().clone();
+        let solution = match args.solution {
+            Some(ref x) => Word::from_str(x),
+            None => words.choose(&mut rand::thread_rng()).unwrap().clone()
+        };
         //let solution = Word::from_str("dwarf");
         if play(solution, &agent, words.clone(), MAX_GUESSES, initial_guess.clone()) {
             wins += 1;
