@@ -13,3 +13,31 @@ For future strategies, I plan to take into account factors such as the average n
 It's fast and I'm trying to learn it.
 ### How fast?
 Currently the program can simulate about 320 games per second (on my 2 core laptop) if the initial word is pre-computed (this step takes close to a second on its own otherwise).
+
+## Usage
+
+```
+wordle-inator
+
+USAGE:
+    wordle-inator [OPTIONS]
+
+OPTIONS:
+    -h, --help
+            Print help information
+            
+    -i, --initial-guess <INITIAL_GUESS>
+            initial word to use as a guess (e.g. if it's been precomputed)
+
+    -m, --max-guesses <MAX_GUESSES>
+            number of guesses allowed per game [default: 6]
+
+    -p, --plays <PLAYS>
+            number of games to simulate [default: 1]
+
+    -s, --solution <SOLUTION>
+            word to use as the solution (by default a random word is chosen from the word list)
+
+    -w, --wordlist <WORDLIST>
+            path to a txt file containing the list of words to use [default: 5_letter_words.txt]
+```
