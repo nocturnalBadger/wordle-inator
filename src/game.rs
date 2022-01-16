@@ -1,4 +1,5 @@
 use std::convert::TryInto;
+use std::fmt;
 
 use crate::agent::WordleAgent;
 
@@ -14,12 +15,33 @@ trait ColorResponse {
 impl ColorResponse for WordleResponse {
     fn green(&self) -> usize {
         return self >> WORD_SIZE;
-
     }
 
     fn yellow(&self) -> usize {
         return self & 0b1111;
+    }
+}
 
+impl fmt::Display for dyn ColorResponse {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let yellow = self.yellow();
+        let green = self.green();
+
+        let mut repr = String::new();
+
+        for i in (0..WORD_SIZE).rev() {
+            if (green >> i) & 1 != 0 {
+                repr.push('🟩');
+            }
+            else if (yellow >> i) & 1 != 0 {
+                repr.push('🟨');
+            }
+            else {
+                repr.push('⬛');
+            }
+        }
+
+        write!(f, "{}", repr)
     }
 }
 
@@ -90,12 +112,12 @@ pub fn play(solution: Word, agent: &dyn WordleAgent, wordlist: Vec<Word>, guesse
 
     println!("guessing {}", guess.string);
     let response = guess.compare(&solution);
+    println!("response was {}", &response as &dyn ColorResponse);
 
     if response >> WORD_SIZE == 0b11111 {
         println!("I win! The word is {}", guess.string);
         return true;
     }
-    println!("response was green: {:05b} yellow: {:05b}", response.green(), response.yellow());
     let new_wordlist = eliminate(&guess, response, &wordlist);
     println!("new wordlist contains {} words", new_wordlist.len());
 
