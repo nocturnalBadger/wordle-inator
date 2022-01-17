@@ -6,6 +6,7 @@ pub trait WordleAgent {
     fn select_move(&self, wordlist: &[Word]) -> Word;
 }
 
+
 // The goal of this agent is to find the word which breaks the possible responses into the most
 // distinct groups
 pub struct SplinterAgent {
@@ -19,6 +20,7 @@ pub struct AverseAgent;
 
 
 impl SplinterAgent {
+
     fn score_word(&self, test_word: &Word, wordlist: &[Word]) -> u32 {
             // Make an array with enough space to hold all possible (10 bit) responses. 
             // This is a bajillion times faster than a hashmap. (size = 2 ^ (WORD_SIZE * 2))
@@ -39,7 +41,7 @@ impl SplinterAgent {
 }
 
 impl WordleAgent for SplinterAgent {
-    fn select_move(&mut self, wordlist: &[Word]) -> Word {
+    fn select_move(&self, wordlist: &[Word]) -> Word {
         let scores: Vec<u32> = wordlist.par_iter()
                              .map(|test_word| {self.score_word(test_word, &wordlist)}).collect();
 
@@ -53,7 +55,6 @@ impl WordleAgent for SplinterAgent {
             }
         }
         println!("{} yields {} unique responses", best_word.string, max_score);
-
         return best_word.clone();
     }
 }

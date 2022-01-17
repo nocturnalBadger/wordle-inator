@@ -97,18 +97,14 @@ fn eliminate(guess: &Word, response: WordleResponse, wordlist: &[Word]) -> Vec<W
     return new_wordlist;
 }
 
-pub fn play(solution: Word, agent: &dyn WordleAgent, wordlist: Vec<Word>, guesses: u8, initial_guess: Option<Word>) -> bool {
+pub fn play(solution: Word, agent: &mut dyn WordleAgent, wordlist: Vec<Word>, guesses: u8, first_round: bool) -> bool {
 
     if guesses == 0 {
         println!("GAME OVER! The word was {}", solution.string);
         return false;
     }
 
-    let guess = match initial_guess {
-        Some(x) => x,
-        None => agent.select_move(&wordlist),
-    };
-
+    let guess = agent.select_move(&wordlist);
 
     println!("guessing {}", guess.string);
     let response = guess.compare(&solution);
@@ -121,5 +117,5 @@ pub fn play(solution: Word, agent: &dyn WordleAgent, wordlist: Vec<Word>, guesse
     let new_wordlist = eliminate(&guess, response, &wordlist);
     println!("new wordlist contains {} words", new_wordlist.len());
 
-    return play(solution, agent, new_wordlist, guesses - 1, None);
+    return play(solution, agent, new_wordlist, guesses - 1, false);
 }
