@@ -1,11 +1,12 @@
 mod game;
 mod agent;
 
-use game::{play, Word};
-use agent::SplinterAgent;
+use game::{play, Word, WORD_SIZE};
+use agent::{SplinterAgent, AverseAgent};
 
 extern crate rand;
 extern crate clap;
+extern crate random_string;
 use rand::seq::SliceRandom;
 use clap::Parser;
 use std::fs;
@@ -45,12 +46,23 @@ fn load_wordlist(filename: std::path::PathBuf) -> Vec<Word> {
     return wordlist;
 }
 
+fn random_wordlist(wordlen: usize, n: usize) -> Vec<Word> {
+    let charset: &str = "abcdefghijklmnopqrstuvwxyz";
+    let mut wordlist: Vec<Word> = Vec::with_capacity(n);
+    for _ in 0..n {
+        let word = random_string::generate(wordlen, charset);
+        wordlist.push(Word::from_str(&word));
+    }
+
+    return wordlist;
+}
+
 fn main() {
     let args = CliArgs::parse();
 
-    let words = load_wordlist(PathBuf::from(args.wordlist));
+    let words = random_wordlist(WORD_SIZE, 10000);//load_wordlist(PathBuf::from(args.wordlist));
 
-    let agent = SplinterAgent{};
+    let agent = AverseAgent{};
     let initial_guess = match args.initial_guess {
         Some(x) => Some(Word::from_str(&x)),
         None => None,

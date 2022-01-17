@@ -45,7 +45,7 @@ impl fmt::Display for dyn ColorResponse {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Word {
     pub string: String,
     bytes: [u8; WORD_SIZE],
@@ -114,7 +114,7 @@ pub fn play(solution: Word, agent: &dyn WordleAgent, wordlist: Vec<Word>, guesse
     let response = guess.compare(&solution);
     println!("response was {}", &response as &dyn ColorResponse);
 
-    if response >> WORD_SIZE == 0b11111 {
+    if response.green() == 0b11111 {
         println!("I win! The word is {}", guess.string);
         return true;
     }
